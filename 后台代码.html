@@ -1,0 +1,436 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>mine管理后台</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="/static/layui/css/layui.css?v=1113" media="all">
+  <link rel="stylesheet" href="/static/css/admin.css" media="all">
+  <link href="/static/css/font-awesome.min.css" rel="stylesheet"/>
+  <script src="/static/js/jquery-3.3.1.min.js"></script>
+  <script src="/static/layui/layui.js"></script>
+  <style>
+    .newss-icon{position:absolute;top:70%;left:20px;margin-top:-19px}.nav_msg{height:50px;line-height:50px;border-left:1px dotted #ddd;width:calc(100% - 220px - 170px - 350px);position:absolute;left:350px;top:0;overflow:hidden}.nav_msg li{float:left;height:50px;line-height:50px;padding:0 10px}.nav_msg a{display:block}select.agent_id{height:30px;line-height:30px;width:100%;padding:2px 5px;font-size:14px;color:#555;background-color:#fff;background-image:none;border:1px solid #ccc;border-radius:4px;-webkit-box-shadow:inset 0 1px 1px rgba(0,0,0,.075);box-shadow:inset 0 1px 1px rgba(0,0,0,.075);-webkit-transition:border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;-o-transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s;transition:border-color ease-in-out .15s,box-shadow ease-in-out .15s}.msg_red{color:red}.dodge{animation:dodgeAni 1s linear infinite;-webkit-animation:dodgeAni 1s linear infinite;-moz-animation:dodgeAni 1s linear infinite;-ms-animation:dodgeAni 1s linear infinite;-o-animation:dodgeAni 1s linear infinite}@-webkit-keyframes dodgeAni{0%{opacity:1;color:red}50%{opacity:1}50.01%{opacity:0}100%{opacity:0}}#play_audio{position:absolute;z-index:10000;width:100%;height:100vh;left:0;top:0;cursor:pointer}
+  </style>
+</head>
+<body class="layui-layout-body">
+<div id="LAY_app">
+  <div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+      <!-- 头部区域 -->
+      <ul class="layui-nav layui-layout-left">
+        <li class="layui-nav-item layadmin-flexible" lay-unselect>
+          <a href="javascript:void(0);" layadmin-event="flexible" title="侧边伸缩">
+            <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+          </a>
+        </li>
+        <li class="layui-nav-item" lay-unselect>
+          <a href="javascript:void(0);" layadmin-event="refresh" title="刷新">
+            <i class="layui-icon layui-icon-refresh-3"></i>
+          </a>
+        </li>
+      </ul>
+      <ul class="nav_msg">
+        <li>
+          <a href="javascript:void(0);" title="用户质押管理" lay-text="用户质押管理" lay-href="https://admin68899.usdtmine.plus/pledge/record.html"
+             id="user_pledge_box"
+             class="menu_reload">
+            <i class="layui-icon layui-icon-rmb"></i>
+            <span>用户质押(<strong class="msg_red" id="user_pledge">0</strong>)</span>
+          </a>
+        </li>
+        <li>
+          <a href="javascript:void(0);" title="用户提现管理" lay-text="用户提现管理" lay-href="https://admin68899.usdtmine.plus/withdraw/index.html"
+             id="user_withdraw_box"
+             class="menu_reload">
+            <i class="layui-icon layui-icon-rmb"></i>
+            <span>用户提现(<strong class="msg_red" id="user_withdraw">0</strong>)</span>
+          </a>
+        </li>
+        <li>
+          <label>
+            <input type="checkbox" id="isSound" checked> 新通知声音
+          </label>
+        </li>
+      </ul>
+      <ul class="layui-nav layui-layout-right" lay-filter="layadmin-layout-right">
+        <li class="layui-nav-item layui-hide-xs" lay-unselect>
+          <a href="javascript:void(0);" lay-href="https://admin68899.usdtmine.plus/cache/index.html" lay-tips="清空缓存" lay-direction="2">
+            <i class="layui-icon layui-icon-fonts-clear"></i>
+            <cite style="display: none">清空缓存</cite>
+          </a>
+        </li>
+        <li class="layui-nav-item layui-hide-xs" lay-unselect>
+          <a href="javascript:void(0);" layadmin-event="theme">
+            <i class="layui-icon layui-icon-theme"></i>
+          </a>
+        </li>
+        <li class="layui-nav-item layui-hide-xs" lay-unselect>
+          <a href="javascript:void(0);" layadmin-event="fullscreen">
+            <i class="layui-icon layui-icon-screen-full"></i>
+          </a>
+        </li>
+        <li class="layui-nav-item" lay-unselect>
+          <a href="javascript:void(0);">
+            <cite>超级管理员</cite>
+          </a>
+        </li>
+        <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-unselect>
+          <a href="javascript:void(0);" layadmin-event="more">
+            <i class="layui-icon layui-icon-more-vertical"></i>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- 侧边菜单 -->
+    <div class="layui-side layui-side-menu">
+      <div class="layui-side-scroll">
+        <a class="layui-logo" href="https://admin68899.usdtmine.plus/index/index.html" title="mine">
+          mine        </a>
+        <ul class="layui-nav layui-nav-tree" lay-shrink="all" id="LAY-system-side-menu"
+            lay-filter="layadmin-system-side-menu">
+          <li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:void(0);" lay-href="https://admin68899.usdtmine.plus/index/count.html" lay-tips="控制台首页" lay-direction="2">
+              <i class="layui-icon layui-icon-home"></i>
+              <cite>控制台首页</cite>
+            </a>
+          </li>
+                          <li data-name="" class="layui-nav-item">
+                  <a href="javascript:void(0);" title="用户管理" lay-tips="用户管理">
+                    <i class="newss-icon fa fa-user"></i>
+                    <cite>用户管理</cite>
+                  </a>
+                  <dl class="layui-nav-child">
+                                            <dd data-name="user_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/user/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="用户列表(user/index)">
+                            <i class="fa fa-circle-o"></i>
+                            用户列表                          </a>
+                        </dd>
+                                              <dd data-name="pledge_record">
+                          <a lay-href="https://admin68899.usdtmine.plus/pledge/record.html" href="javascript:void(0);" class="menu_reload"
+                             title="质押申请(pledge/record)">
+                            <i class="fa fa-circle-o"></i>
+                            质押申请                          </a>
+                        </dd>
+                                              <dd data-name="withdraw_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/withdraw/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="用户提现(withdraw/index)">
+                            <i class="fa fa-circle-o"></i>
+                            用户提现                          </a>
+                        </dd>
+                                              <dd data-name="exchange_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/exchange/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="兑换记录(exchange/index)">
+                            <i class="fa fa-circle-o"></i>
+                            兑换记录                          </a>
+                        </dd>
+                                              <dd data-name="mine_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/mine/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="挖矿奖励记录(mine/index)">
+                            <i class="fa fa-circle-o"></i>
+                            挖矿奖励记录                          </a>
+                        </dd>
+                                              <dd data-name="transfer_batch_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/transfer_batch/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="批量划币记录(transfer_batch/index)">
+                            <i class="fa fa-circle-o"></i>
+                            批量划币记录                          </a>
+                        </dd>
+                                              <dd data-name="mine_agent">
+                          <a lay-href="https://admin68899.usdtmine.plus/mine/agent.html" href="javascript:void(0);" class="menu_reload"
+                             title="代理分佣记录(mine/agent)">
+                            <i class="fa fa-circle-o"></i>
+                            代理分佣记录                          </a>
+                        </dd>
+                                        </dl>
+                </li>
+                                <li data-name="" class="layui-nav-item">
+                  <a href="javascript:void(0);" title="系统配置" lay-tips="系统配置">
+                    <i class="newss-icon fa fa-gear"></i>
+                    <cite>系统配置</cite>
+                  </a>
+                  <dl class="layui-nav-child">
+                                            <dd data-name="pledge_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/pledge/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="质押配置(pledge/index)">
+                            <i class="fa fa-circle-o"></i>
+                            质押配置                          </a>
+                        </dd>
+                                              <dd data-name="pool_data_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/pool_data/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="矿池数据(pool_data/index)">
+                            <i class="fa fa-circle-o"></i>
+                            矿池数据                          </a>
+                        </dd>
+                                              <dd data-name="address_config_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/address_config/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="授权地址(address_config/index)">
+                            <i class="fa fa-circle-o"></i>
+                            授权地址                          </a>
+                        </dd>
+                                              <dd data-name="award_config_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/award_config/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="奖励配置(award_config/index)">
+                            <i class="fa fa-circle-o"></i>
+                            奖励配置                          </a>
+                        </dd>
+                                              <dd data-name="agent_award_config_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/agent_award_config/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="代理分佣配置(agent_award_config/index)">
+                            <i class="fa fa-circle-o"></i>
+                            代理分佣配置                          </a>
+                        </dd>
+                                              <dd data-name="help_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/help/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="帮助中心(help/index)">
+                            <i class="fa fa-circle-o"></i>
+                            帮助中心                          </a>
+                        </dd>
+                                              <dd data-name="config_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/config/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="系统配置(config/index)">
+                            <i class="fa fa-circle-o"></i>
+                            系统配置                          </a>
+                        </dd>
+                                        </dl>
+                </li>
+                                <li data-name="" class="layui-nav-item">
+                  <a href="javascript:void(0);" title="权限设置" lay-tips="权限设置">
+                    <i class="newss-icon fa fa-gears"></i>
+                    <cite>权限设置</cite>
+                  </a>
+                  <dl class="layui-nav-child">
+                                            <dd data-name="admin_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/admin/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="管理员列表(admin/index)">
+                            <i class="fa fa-circle-o"></i>
+                            管理员列表                          </a>
+                        </dd>
+                                              <dd data-name="admin_role_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/admin_role/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="角色管理(admin_role/index)">
+                            <i class="fa fa-circle-o"></i>
+                            角色管理                          </a>
+                        </dd>
+                                              <dd data-name="admin_power_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/admin_power/index.html" href="javascript:void(0);" class="menu_reload"
+                             title="权限列表(admin_power/index)">
+                            <i class="fa fa-circle-o"></i>
+                            权限列表                          </a>
+                        </dd>
+                                              <dd data-name="admin_log_index">
+                          <a lay-href="https://admin68899.usdtmine.plus/admin/log_index.html" href="javascript:void(0);" class="menu_reload"
+                             title="管理员登录日志(admin/log_index)">
+                            <i class="fa fa-circle-o"></i>
+                            管理员登录日志                          </a>
+                        </dd>
+                                        </dl>
+                </li>
+                          <li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:;" title="我的信息" lay-href="https://admin68899.usdtmine.plus/admin/info.html">
+              <i class="layui-icon layui-icon-username"></i><cite>我的信息</cite>
+            </a>
+          </li>
+          <li class="layui-nav-item layui-nav-itemed">
+            <a href="javascript:;" id="out_login">
+              <i class="layui-icon layui-icon-auz"></i><cite>安全退出</cite>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- 页面标签 -->
+    <div class="layadmin-pagetabs" id="LAY_app_tabs">
+      <div class="layui-icon layadmin-tabs-control layui-icon-prev" layadmin-event="leftPage"></div>
+      <div class="layui-icon layadmin-tabs-control layui-icon-next" layadmin-event="rightPage"></div>
+      <div class="layui-icon layadmin-tabs-control layui-icon-down">
+        <ul class="layui-nav layadmin-tabs-select" lay-filter="layadmin-pagetabs-nav">
+          <li class="layui-nav-item" lay-unselect>
+            <a href="javascript:void(0);"></a>
+            <dl class="layui-nav-child layui-anim-fadein">
+              <dd layadmin-event="closeThisTabs"><a href="javascript:void(0);">关闭当前标签页</a></dd>
+              <dd layadmin-event="closeOtherTabs"><a href="javascript:void(0);">关闭其它标签页</a></dd>
+              <dd layadmin-event="closeAllTabs"><a href="javascript:void(0);">关闭全部标签页</a></dd>
+            </dl>
+          </li>
+        </ul>
+      </div>
+      <div class="layui-tab" lay-unauto lay-allowClose="true" lay-filter="layadmin-layout-tabs">
+        <ul class="layui-tab-title" id="LAY_app_tabsheader">
+          <li lay-id="https://admin68899.usdtmine.plus/index/count.html" lay-attr="https://admin68899.usdtmine.plus/index/count.html" class="layui-this">
+            <i class="layui-icon layui-icon-home"></i> 首页
+          </li>
+        </ul>
+      </div>
+    </div>
+    <!-- 主体内容 -->
+    <div class="layui-body" id="LAY_app_body">
+      <div class="layadmin-tabsbody-item layui-show">
+        <iframe src="https://admin68899.usdtmine.plus/index/count.html" frameborder="0" class="layadmin-iframe"></iframe>
+      </div>
+    </div>
+    <!-- 辅助元素，一般用于移动设备下遮罩 -->
+    <div class="layadmin-body-shade" layadmin-event="shade"></div>
+  </div>
+</div>
+<audio id="audio" autoplay style="display:none;">
+  <source src="/static/msg.wav" type="audio/mpeg">
+</audio>
+<div id="play_audio" title="请点击，点击激活声音后消失"></div>
+<script>
+    layui.config({
+        base: '/static/layui/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use('index');
+    $(document).ready(function () {
+        var audio = document.getElementById('audio'), btn_reload = $('#btn_reload'), task = {},
+            title = document.getElementsByTagName('title')[0],
+            timerPlay = null, title_count = true, timerTitle = null, clickTimer = null,
+            ele = {
+                user_withdraw: {
+                    name: '用户提现:',
+                    id: document.getElementById('user_withdraw'),
+                    box: $('#user_withdraw_box'),
+                    value: Number("0")
+                },
+                user_pledge: {
+                    name: '用户质押:',
+                    id: document.getElementById('user_pledge'),
+                    box: $('#user_pledge_box'),
+                    value: Number("0")
+                },
+            };
+        function getNumber() {
+            $.get("https://admin68899.usdtmine.plus/index/index.html?ajax=1", function (a) {
+                if (!$.isEmptyObject(a)) {
+                    var msg = [];
+                    $.each(['user_withdraw'], function (n, i) {
+                        var d = Number(a[i]), value = ele[i].value;
+                        if (d > value) {
+                            ele[i].box.addClass('dodge');
+                            task[i] = ele[i].name + (d - value);
+                            msg.push(task[i]);
+                        }
+                        if (d < value) {
+                            ele[i].box.removeClass('dodge');
+                            delete(task[i]);
+                        }
+                        ele[i].value = d;
+                        ele[i].id.innerHTML = d;
+                    });
+                    $.each(['user_pledge'], function (n, i) {
+                        var d = Number(a[i]), value = ele[i].value;
+                        if (d > value) {
+                            ele[i].box.addClass('dodge');
+                            task[i] = ele[i].name + (d - value);
+                            msg.push(task[i]);
+                        }
+                        if (d < value) {
+                            ele[i].box.removeClass('dodge');
+                            delete(task[i]);
+                        }
+                        ele[i].value = d;
+                        ele[i].id.innerHTML = d;
+                    });
+                    if (msg.length > 0) {
+                        layer.msg(msg.join(','), {icon: 0, shift: 6});
+                    }
+                }
+                play();
+            }, 'json');
+        }
+        function setTitle() {
+            clearTimeout(timerTitle);
+            title.innerHTML = "mine-管理后台";
+            if (!$.isEmptyObject(task)) {
+                if (title_count) {
+                    var t = [], i;
+                    for (i in task) {
+                        t.push(task[i]);
+                    }
+                    title.innerHTML = t.join(',');
+                }
+                title_count = !title_count;
+                timerTitle = setTimeout(setTitle, 1000)
+            }
+        }
+        function play() {
+            var checked = document.getElementById('isSound').checked;
+            clearTimeout(timerPlay);
+            if (!$.isEmptyObject(task)) {
+                if(checked) {
+                    var t = false, i;
+                    for (i in task) {
+                        if(i != 'route_warning' || i != 'supplier_warning') {
+                            t = true;
+                            break;
+                        }
+                    }
+                    if(t) {
+                        audio.pause();
+                        audio.play();
+                    }
+                }
+                timerPlay = setTimeout(play, 13000)
+            } else {
+                if(checked) {
+                    audio.pause();
+                }
+            }
+            setTitle();
+        }
+        try {
+            audio.pause(); //自动播放的浏览器暂停
+        } catch (e) {
+            console.log(e)
+        }
+        if ((/Firefox/i).test(navigator.userAgent)) {
+            // 不自动播放的浏览器需要用户手动点击一次激活播放
+            $('#play_audio').on('click', function () {
+                audio.play();
+                audio.pause();
+                $(this).remove();
+            })
+        } else {
+            $('#play_audio').remove();
+        }
+        setInterval(getNumber, 30 * 1000);
+        $(document)
+            // 点击用户提现
+            .on('click', '#user_withdraw_box', function () {
+                $(this).removeClass('dodge');
+                delete(task['user_withdraw']);
+                play();
+            })
+            // 点击用户质押
+            .on('click', '#user_pledge_box', function () {
+                $(this).removeClass('dodge');
+                delete(task['user_pledge']);
+                play();
+            })
+            //点击刷新框架
+            .on('click', '.menu_reload', function () {
+                var v = $(this).data('init');
+                if (!v) {
+                    $(this).data('init', 1);
+                } else {
+                    clearTimeout(clickTimer);
+                    clickTimer = setTimeout(function () {
+                        btn_reload.trigger('click');
+                    }, 500);
+                }
+            })
+            .on('click', '#out_login', function () {
+                layer.confirm('确认退出？', {icon: 3, title: '提示'}, function(index){
+                    location.href = "https://admin68899.usdtmine.plus/login/out.html";
+                });
+            })
+    });
+</script>
+</body>
+</html>
